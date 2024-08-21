@@ -1,15 +1,16 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
-
+const checkLogin = require("../middlewares/checkLogin.js");
 // creating model
 const todoSchema = require("../schema/todo.schema.js");
+
 const Todo = new mongoose.model("Todo", todoSchema);
 
 // defining all the routes
 
 // POST A TODO
-router.post("/create", async (req, res) => {
+router.post("/create", checkLogin, async (req, res) => {
   const newTodo = new Todo(req.body);
   try {
     await newTodo.save();
@@ -22,26 +23,24 @@ router.post("/create", async (req, res) => {
 });
 
 // GET ALL TODO
-router.get("/get", async (req, res) => {
-    try{
-        let data = await Todo.find({}).select({
-            _id: 0,
-            __v: 0,
-            date: 0
-        });
+router.get("/get", checkLogin, async (req, res) => {
+  try {
+    let data = await Todo.find({}).select({
+      _id: 0,
+      __v: 0,
+      date: 0,
+    });
 
-        res.status(200).json({
-            result: data
-        })
-        
-    }
-    catch(error){
-        console.log(error.message)
-    }
+    res.status(200).json({
+      result: data,
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 
 // UPDATE A TODO
-router.put("/update/:id", async (req, res) => {
+router.put("/update/:id", checkLogin, async (req, res) => {
   try {
     await Todo.updateOne(
       { _id: req.params.id },
@@ -61,11 +60,11 @@ router.put("/update/:id", async (req, res) => {
 });
 
 // DELETE A TODO
-router.delete("/delete/:id", async (req, res) => {
-    await Todo.deleteOne({_id: req.params.id})
-    res.status(200).json({
-        message: "Todo deleted successfuly"
-    })
+router.delete("/delete/:id", checkLogin, async (req, res) => {
+  await Todo.deleteOne({ _id: req.params.id });
+  res.status(200).json({
+    message: "Todo deleted successfuly",
+  });
 });
 
 module.exports = router;

@@ -1,15 +1,16 @@
 // importing express and mongoose pakg.
 const express = require("express");
 const mongoose = require("mongoose");
-
+const dotenv = require('dotenv')
 // importing todoHandler route
 const todoHandler = require('./routes/todoHandler')
-
+const userHandler = require('./routes/userHandler')
 const app = express();
+dotenv.config();
 app.use(express.json());
-// mongodb url
-const dbUrl =
-  "mongodb+srv://labibahammed087:R26E0gzj3zBGMp8p@todo.ec4zh1n.mongodb.net/todos";
+
+// MONGO DB url
+const dbUrl = process.env.MONGO;
 // connecting to the mongodb useing mongoose
 mongoose
   .connect(dbUrl)
@@ -19,6 +20,7 @@ mongoose
 
 // All routes
 app.use('/todo', todoHandler)
+app.use('/user', userHandler)
 // starting the express server
 app.listen(5000, () => {
   console.log("app listening at port 5000");
